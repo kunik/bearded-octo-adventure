@@ -4,7 +4,10 @@ import citrus.core.starling.StarlingState;
 import dragonBones.Armature;
 import dragonBones.factorys.StarlingFactory;
 
+import starling.core.Starling;
+
 import starling.display.Sprite;
+import starling.events.ResizeEvent;
 import flash.events.Event;
 
 public class GameState extends StarlingState {
@@ -20,6 +23,8 @@ public class GameState extends StarlingState {
     factory = new StarlingFactory();
     factory.addEventListener(Event.COMPLETE, textureCompleteHandler);
     factory.parseData(new ResourcesData());
+
+    stage.addEventListener(ResizeEvent.RESIZE, handleStageResize);
   }
 
   protected function textureCompleteHandler(evt:Event):void {
@@ -62,6 +67,13 @@ public class GameState extends StarlingState {
         character.ky = 1;
       }
     }
+  }
+
+  private function handleStageResize(event:ResizeEvent):void {
+    stage.stageWidth = event.width;
+    stage.stageHeight = event.height;
+    Starling.current.viewPort.width = event.width;
+    Starling.current.viewPort.height = event.height;
   }
 }
 }
