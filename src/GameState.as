@@ -11,15 +11,15 @@ import starling.events.ResizeEvent;
 import flash.events.Event;
 
 public class GameState extends StarlingState {
-  [Embed(source = "../assets/Robot.png", mimeType = "application/octet-stream")]
+  [Embed(source = "../assets/Motorcycle.png", mimeType = "application/octet-stream")]
   public static const ResourcesData:Class;
 
   private static const resizable:Boolean = true;
   private static const maxWidth:uint = 800;
   private static const characterWidth:uint = 180;
   private static const characterHeight:uint = 230;
-  private static const characterType:Class = Robot;
-  private static const characterArmatureName:String = "robot";
+  private static const characterType:Class = MotorcycleMan;
+  private static const characterArmatureName:String = "motorcycleMan";
 
   private var factory:StarlingFactory;
 
