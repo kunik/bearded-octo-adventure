@@ -14,59 +14,67 @@ public class GameState extends StarlingState {
   [Embed(source = "../assets/Robot.png", mimeType = "application/octet-stream")]
   public static const ResourcesData:Class;
 
+  private static const resizable:Boolean = true;
+  private static const maxWidth:uint = 800;
+  private static const characterWidth:uint = 180;
+  private static const characterHeight:uint = 230;
+  private static const characterType:Class = Robot;
+  private static const characterArmatureName:String = "robot";
+
   private var factory:StarlingFactory;
-  private var character:Robot;
 
   override public function initialize():void {
     super.initialize();
-
-    factory = new StarlingFactory();
-    factory.addEventListener(Event.COMPLETE, textureCompleteHandler);
-    factory.parseData(new ResourcesData());
-
-    stage.addEventListener(ResizeEvent.RESIZE, handleStageResize);
+    loadResources();
+    bindListeners();
   }
 
-  protected function textureCompleteHandler(evt:Event):void {
-    factory.removeEventListener(Event.COMPLETE, textureCompleteHandler);
-    createCharacter();
-  }
+  protected function displayCharacters():void {
+    var movementList:Vector.<String> = factory.buildArmature(characterArmatureName).animation.animationData.movementList;
+    var countInRow:Number = maxWidth / characterWidth;
+    var x:uint = 0;
+    var y:uint = 0;
 
-  protected function createCharacter():void {
-    var armature:Armature = factory.buildArmature("robot");
-    (armature.display as Sprite).scaleY = 0.5;
-    (armature.display as Sprite).scaleX = -0.5;
+    movementList.forEach(function(animationName, id, _):void {
+      var character:Character = createCharacter(id);
 
-    character = new Robot("character", {
-      x: Math.floor(Math.random() * stage.stageWidth),
-      y: Math.floor(Math.random() * stage.stageHeight),
-      inverted: false,
-      view: armature
+      character.y = Number(characterHeight * (y + 0.5));
+      character.x = Number(characterWidth * (x + 0.5));
+      add(character);
+
+      character.startMotion(animationName);
+
+      x++;
+      if (x > countInRow) {
+        x = 0;
+        y++;
+      }
     });
-    add(character);
-
-    character.startMoving();
   }
 
-  override public function update(timeDelta:Number):void {
-    super.update(timeDelta);
+  protected function createCharacter(id:uint):Character {
+    var characterArmature:Armature = factory.buildArmature(characterArmatureName);
+    (characterArmature.display as Sprite).scaleY = 0.5;
+    (characterArmature.display as Sprite).scaleX = -0.5;
 
-    if (character) {
-      character.x += timeDelta * 100 * character.kx;
-      character.y += timeDelta * 100 * character.ky;
+    var character:Character = Character(new characterType("character" + id, { view: characterArmature }));
+    return character;
+  }
 
-      if (character.x >= stage.stageWidth) {
-        character.inverted = true;
-      } else if (character.x <= 0) {
-        character.inverted = false;
-      }
+  protected function textureLoadedHandler(evt:Event):void {
+    factory.removeEventListener(Event.COMPLETE, textureLoadedHandler);
 
-      if (character.y >= stage.stageHeight) {
-        character.ky = -1;
-      } else if (character.y <= 0) {
-        character.ky = 1;
-      }
-    }
+    displayCharacters();
+  }
+
+  private function loadResources():void {
+    factory = new StarlingFactory();
+    factory.addEventListener(Event.COMPLETE, textureLoadedHandler);
+    factory.parseData(new ResourcesData());
+  }
+
+  private function bindListeners():void {
+    stage.addEventListener(ResizeEvent.RESIZE, handleStageResize);
   }
 
   private function handleStageResize(event:ResizeEvent):void {
