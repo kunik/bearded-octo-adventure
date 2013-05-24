@@ -11,10 +11,8 @@ import starling.events.ResizeEvent;
 import flash.events.Event;
 
 public class GameState extends StarlingState {
-  [Embed(source = "../assets/Motorcycle.png", mimeType = "application/octet-stream")]
-  public static const ResourcesData:Class;
+  public static const ResourcesData:Class = Assets.Motocycle;
 
-  private static const resizable:Boolean = true;
   private static const maxWidth:uint = 800;
   private static const characterWidth:uint = 180;
   private static const characterHeight:uint = 230;
