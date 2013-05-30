@@ -1,6 +1,8 @@
 package states {
 import dragonBones.Armature;
+import dragonBones.Bone;
 import dragonBones.factorys.StarlingFactory;
+import dragonBones.objects.SkeletonData;
 
 import flash.utils.setInterval;
 
@@ -10,34 +12,61 @@ import starling.display.Image;
 import starling.events.ResizeEvent;
 import flash.events.Event;
 
+import starling.utils.Color;
+
 public class Game extends Base {
 //  public static const ResourcesData:Class = Assets.DogDressup;
-  public static const ResourcesData:Class = Assets.DogGray;
+  public static const ResourcesData:Class = Assets.DogGray2;
 
-  private static const maxWidth:uint = 800;
-  private static const characterWidth:uint = 450;
-  private static const characterHeight:uint = 200;
+  private static const marginSize:uint = 50;
   private static const characterType:Class = MotorcycleMan;
-  private static const characterArmatureName:String = "teen_boy_neutral";
+  private static const characterArmatureName:String = "sad";
 
   private var factory:StarlingFactory;
+  private var sd:SkeletonData;
 
   protected function runAnimations(character:Character):void {
-    character.startMotion("neutral1")
-//    setInterval(function():void {
-//      (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.animation.gotoAndPlay('eyes_blink1');
-//    }, 1000)
+    trace((character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl);
+    (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl.forEach(function(armature:*, _, _):void {
+      if (armature.isPrototypeOf(Armature)) {
+        trace("######################[object Armature:" + armature.name + "]")
+      } else {
+        trace("######################" + armature)
+      }
+    });
+
+    (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl.forEach(function(armature:*, _, _):void {
+      if (armature.isPrototypeOf(Armature)) {
+        setEyeColor(armature, 0xD4832B);
+      }
+    });
+
+    character.startMotion("sad1")
+    setInterval(function():void {
+      //
+      (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.animation.gotoAndPlay('eyes_blink');
+    }, 5000)
   }
 
   protected function displayCharacter():void {
     var character:Character = createCharacter();
 
-    character.y = Number(characterHeight * 0.5);
-    character.x = Number(characterWidth * 0.5);
+//    character.y = Number(character.height * 0.5 + marginSize);
+//    character.x = Number(character.width * 0.5 + marginSize);
+
+    character.y = marginSize;
+    character.x = marginSize;
     add(character);
 
-    setSpotColor(character.view as Armature, 0x2C8FCB);
+//    setSpotColor(character.view as Armature, 0x2C8FCB);
+    setSpotColor(character.view as Armature, Color.RED);
     setMainColor(character.view as Armature, 0xFFF7E7);
+    setEyeColor(character.view as Armature, Color.RED);
+//    setEyeColor(character.view as Armature, 0xD4832B);
+
+//    var ct:ColorTransform = new ColorTransform()
+//    ct.color=0xD4832B;
+//    (character.view as Armature).getBone("head").childArmature.getBone("eyes").childArmature.colorTransform = ct
 
 //      var hat:Image = factory.getTextureDisplay("hat") as Image;
 //      var hat:Image = (factory.buildArmature("hat") as Armature).getBone("hat").display as Image;
@@ -50,7 +79,7 @@ public class Game extends Base {
   }
 
   protected function setSpotColor(armature:Armature, color:uint, bpath:String=""):void {
-    armature.getBones().forEach(function(bone, _, _):void {
+    armature.getBones().forEach(function(bone:Bone, _, _):void {
       if (bone.name.indexOf('spot') == 0) {
         trace("SPOT: " + bpath);
         (bone.display as Image).color = color
@@ -63,7 +92,7 @@ public class Game extends Base {
   }
 
   protected function setMainColor(armature:Armature, color:uint, bpath:String=""):void {
-    armature.getBones().forEach(function(bone, _, _):void {
+    armature.getBones().forEach(function(bone:Bone, _, _):void {
       if (bone.name == 'color') {
         trace("MAIN: " + bpath + '/' + bone.name);
         (bone.display as Image).color = color
@@ -75,8 +104,22 @@ public class Game extends Base {
     });
   }
 
+  protected function setEyeColor(armature:Armature, color:uint, bpath:String=""):void {
+    armature.getBones().forEach(function(bone:Bone, _, _):void {
+      if (bone.name == 'eyecolor') {
+//      if (bone.name == 'eyeapple') {
+        trace("EYE: " + bpath + '/' + bone.name);
+        (bone.display as Image).color = color
+      }
+
+      if (bone.childArmature) {
+        setEyeColor(bone.childArmature, color, bpath + '/' + bone.name);
+      }
+    });
+  }
+
   protected function printBones(armature:Armature, prefix:String=""):void {
-    armature.getBones().forEach(function(bone, _, _):void {
+    armature.getBones().forEach(function(bone:Bone, _, _):void {
       trace(prefix + "- " + bone.name);
       if (bone.childArmature) {
         printBones(bone.childArmature, prefix + "  ");
@@ -87,12 +130,12 @@ public class Game extends Base {
   protected function printAnimations(armature:Armature, bpath:String=""):void {
     var movementList:Vector.<String> = armature.animation.animationData.movementList;
     trace("[" + bpath + "]:");
-    movementList.forEach(function(animationName, _, _):void {
+    movementList.forEach(function(animationName:String, _, _):void {
       trace("  - " + animationName);
     })
     trace("--");
 
-    armature.getBones().forEach(function(bone, _, _):void {
+    armature.getBones().forEach(function(bone:Bone, _, _):void {
       if (bone.childArmature) {
         printAnimations(bone.childArmature, bpath + "/" + bone.name);
       }
@@ -101,18 +144,30 @@ public class Game extends Base {
 
   protected function createCharacter(id:uint=0):Character {
     var characterArmature:Armature = factory.buildArmature(characterArmatureName);
+//    characterArmature.addEventListener(AnimationEvent.MOVEMENT_CHANGE, function(e):void {
+//      trace(e)
+//    })
 //    (characterArmature.display as Sprite).scaleY = 0.5;
 //    (characterArmature.display as Sprite).scaleX = 0.5;
 
     printBones(characterArmature);
     printAnimations(characterArmature);
 
-    var character:Character = Character(new characterType("character" + id, { view: characterArmature }));
+    var character:Character = Character(new characterType("character" + id, {width: 244, height: 349, view: characterArmature }));
     return character;
   }
 
   protected function textureLoadedHandler(evt:Event):void {
     factory.removeEventListener(Event.COMPLETE, textureLoadedHandler);
+
+//    var characterArmature:Armature;
+//    sd.animationNames.forEach(function(armatureName:String, _, _):void {
+//      characterArmature = factory.buildArmature(armatureName);
+//
+//      setSpotColor(characterArmature, 0x2C8FCB);
+//      setMainColor(characterArmature, 0xFFF7E7);
+//      setEyeColor(characterArmature, 0xD4832B);
+//    });
 
     displayCharacter();
   }
@@ -120,7 +175,7 @@ public class Game extends Base {
   override protected function loadResources():void {
     factory = new StarlingFactory();
     factory.addEventListener(Event.COMPLETE, textureLoadedHandler);
-    factory.parseData(new ResourcesData());
+    sd = factory.parseData(new ResourcesData());
   }
 
   override protected function bindListeners():void {

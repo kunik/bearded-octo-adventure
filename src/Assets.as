@@ -14,5 +14,7 @@ public class Assets {
   public static const DogDressup:Class;
   [Embed(source = "../assets/DogGray.png", mimeType = "application/octet-stream")]
   public static const DogGray:Class;
+  [Embed(source = "../assets/DogGray2.png", mimeType = "application/octet-stream")]
+  public static const DogGray2:Class;
 }
 }
