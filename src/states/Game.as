@@ -5,6 +5,7 @@ import dragonBones.factorys.StarlingFactory;
 import dragonBones.objects.SkeletonData;
 
 import flash.utils.setInterval;
+import flash.utils.setTimeout;
 
 import starling.core.Starling;
 import starling.display.Image;
@@ -15,37 +16,37 @@ import flash.events.Event;
 import starling.utils.Color;
 
 public class Game extends Base {
-//  public static const ResourcesData:Class = Assets.DogDressup;
-  public static const ResourcesData:Class = Assets.DogGray2;
+  public static const ResourcesData:Class = Assets.DogDressup;
+//  public static const ResourcesData:Class = Assets.DogGray2;
 
   private static const marginSize:uint = 50;
   private static const characterType:Class = MotorcycleMan;
-  private static const characterArmatureName:String = "sad";
+  private static const characterArmatureName:String = "neutral";
 
   private var factory:StarlingFactory;
   private var sd:SkeletonData;
 
   protected function runAnimations(character:Character):void {
-    trace((character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl);
-    (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl.forEach(function(armature:*, _, _):void {
-      if (armature.isPrototypeOf(Armature)) {
-        trace("######################[object Armature:" + armature.name + "]")
-      } else {
-        trace("######################" + armature)
-      }
-    });
+//    trace((character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl);
+//    (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl.forEach(function(armature:*, _, _):void {
+//      if (armature.isPrototypeOf(Armature)) {
+//        trace("######################[object Armature:" + armature.name + "]")
+//      } else {
+//        trace("######################" + armature)
+//      }
+//    });
+//
+//    (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl.forEach(function(armature:*, _, _):void {
+//      if (armature.isPrototypeOf(Armature)) {
+//        setEyeColor(armature, 0xD4832B);
+//      }
+//    });
 
-    (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.getBone('eye_l').dl.forEach(function(armature:*, _, _):void {
-      if (armature.isPrototypeOf(Armature)) {
-        setEyeColor(armature, 0xD4832B);
-      }
-    });
-
-    character.startMotion("sad1")
-    setInterval(function():void {
-      //
-      (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.animation.gotoAndPlay('eyes_blink');
-    }, 5000)
+    character.startMotion("neutral1")
+//    setInterval(function():void {
+//      //
+//      (character.view as Armature).getBone('head').childArmature.getBone('eyes').childArmature.animation.gotoAndPlay('eyes_blink');
+//    }, 5000)
   }
 
   protected function displayCharacter():void {
@@ -64,56 +65,109 @@ public class Game extends Base {
     setEyeColor(character.view as Armature, Color.RED);
 //    setEyeColor(character.view as Armature, 0xD4832B);
 
+
+//    var hatArmature:Armature = factory.buildArmature("clothes/hats/hat_1") as Armature;
+//    var hat:Bone = hatArmature.getBone("hat1");
+//    var placeholder:Bone = (character.view as Armature).getBone("head").childArmature.getBone("placeholder_hat");
+//    placeholder.childArmature.getBones().forEach(function(bone:Bone, _, _):void {
+//      placeholder.childArmature.removeBone(bone);
+//      bone.dispose();
+//    });
+////    placeholder.childArmature.addBone(hat);
+//    hatArmature.dispose();
+////    setDressupColor(hat.armature, 0xD4832B);
+
+
+
+//
 //    var ct:ColorTransform = new ColorTransform()
 //    ct.color=0xD4832B;
 //    (character.view as Armature).getBone("head").childArmature.getBone("eyes").childArmature.colorTransform = ct
 
 //      var hat:Image = factory.getTextureDisplay("hat") as Image;
-//      var hat:Image = (factory.buildArmature("hat") as Armature).getBone("hat").display as Image;
+//      printBones(factory.buildArmature("dog_boy/dog_teen33") as Armature);
 
-//      var placeholder:Bone = (character.view as Armature).getBone("head").childArmature.getBone("hat_placehplder");
+
+    var hats:Bone = (factory.buildArmature("hats") as Armature).getBone("hats");
+    var placeholder:Bone = (character.view as Armature).getBone("head").childArmature.getBone("placeholder_hat");
+    placeholder.childArmature.getBones().forEach(function(bone:Bone, _, _):void {
+      placeholder.childArmature.removeBone(bone);
+      bone.dispose();
+    });
+    printAnimations(hats.armature);
+    hats.armature.animation.gotoAndPlay('hat1');
+    placeholder.childArmature.addBone(hats);
+    printAnimations(hats.armature);
+    setDressupColor(placeholder.childArmature, 0xD4832B);
+
+    setTimeout(function():void {
+      setDressupColor(placeholder.childArmature, Color.RED);
+    }, 5000);
+
+    setTimeout(function():void {
+      var hats:Bone = (factory.buildArmature("hats") as Armature).getBone("hats");
+      var placeholder:Bone = (character.view as Armature).getBone("head").childArmature.getBone("placeholder_hat");
+      placeholder.childArmature.getBones().forEach(function(bone:Bone, _, _):void {
+        placeholder.childArmature.removeBone(bone);
+        bone.dispose();
+      });
+      printAnimations(hats.armature);
+      hats.armature.animation.gotoAndPlay('hat2');
+      placeholder.childArmature.addBone(hats);
+      printAnimations(hats.armature);
+      setDressupColor(placeholder.childArmature, Color.AQUA);
+    }, 10000);
+
+    setTimeout(function():void {
+      var hats:Bone = (factory.buildArmature("hats") as Armature).getBone("hats");
+      var placeholder:Bone = (character.view as Armature).getBone("head").childArmature.getBone("placeholder_hat");
+      placeholder.childArmature.getBones().forEach(function(bone:Bone, _, _):void {
+        placeholder.childArmature.removeBone(bone);
+        bone.dispose();
+      });
+      printAnimations(hats.armature);
+      hats.armature.animation.gotoAndPlay('hat3');
+      placeholder.childArmature.addBone(hats);
+      printAnimations(hats.armature);
+      setDressupColor(placeholder.childArmature, Color.GREEN);
+    }, 15000);
+
+//      var hat:Image = (factory.buildArmature("hats") as Armature).getBone("hats").display as Image;
+//      var placeholder:Bone = (character.view as Armature).getBone("head").childArmature.getBone("placeholder_hat");
+//    trace(placeholder)
 //      placeholder.display.dispose();
 //      placeholder.display = hat;
+//
+//    printBones(character.view as Armature);
 
     runAnimations(character);
   }
 
   protected function setSpotColor(armature:Armature, color:uint, bpath:String=""):void {
-    armature.getBones().forEach(function(bone:Bone, _, _):void {
-      if (bone.name.indexOf('spot') == 0) {
-        trace("SPOT: " + bpath);
-        (bone.display as Image).color = color
-      }
-
-      if (bone.childArmature) {
-        setSpotColor(bone.childArmature, color, bpath + '/' + bone.name);
-      }
-    });
+    setColor(armature, 'spot', color, bpath);
   }
 
   protected function setMainColor(armature:Armature, color:uint, bpath:String=""):void {
-    armature.getBones().forEach(function(bone:Bone, _, _):void {
-      if (bone.name == 'color') {
-        trace("MAIN: " + bpath + '/' + bone.name);
-        (bone.display as Image).color = color
-      }
-
-      if (bone.childArmature) {
-        setMainColor(bone.childArmature, color, bpath + '/' + bone.name);
-      }
-    });
+    setColor(armature, 'color', color, bpath);
   }
 
   protected function setEyeColor(armature:Armature, color:uint, bpath:String=""):void {
+    setColor(armature, 'eyecolor', color, bpath);
+  }
+
+  protected function setDressupColor(armature:Armature, color:uint, bpath:String=""):void {
+    setMainColor(armature, color, bpath);
+  }
+
+  protected function setColor(armature:Armature, boneName:String, color:uint, bpath:String=""):void {
     armature.getBones().forEach(function(bone:Bone, _, _):void {
-      if (bone.name == 'eyecolor') {
-//      if (bone.name == 'eyeapple') {
-        trace("EYE: " + bpath + '/' + bone.name);
+      if (bone.name.indexOf(boneName) == 0) {
+        trace(boneName + ": " + bpath + '/' + bone.name);
         (bone.display as Image).color = color
       }
 
       if (bone.childArmature) {
-        setEyeColor(bone.childArmature, color, bpath + '/' + bone.name);
+        setColor(bone.childArmature, boneName, color, bpath + '/' + bone.name);
       }
     });
   }
